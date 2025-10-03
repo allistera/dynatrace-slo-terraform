@@ -1,3 +1,12 @@
+terraform {
+  required_providers {
+    dynatrace = {
+      source  = "dynatrace-oss/dynatrace"
+      version = "~> 1.0"
+    }
+  }
+}
+
 resource "dynatrace_slo" "latency" {
   name        = "${var.service_name} - Latency"
   disabled    = false
