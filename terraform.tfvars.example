@@ -1,0 +1,26 @@
+# Dynatrace Configuration
+dynatrace_environment_url = "https://abc12345.live.dynatrace.com"
+dynatrace_api_token       = "dt0c01.XXXXXXXXXXXXXXXXXXXXXXXX.YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY"
+
+# Service Configuration
+service_name = "TodoService"
+timeframe    = "-1w"
+
+# Latency SLO Configuration
+latency_target        = 95.0
+latency_warning       = 97.0
+latency_threshold_ms  = 500
+latency_percentile    = 95
+
+# Availability SLO Configuration
+availability_target  = 99.9
+availability_warning = 99.95
+
+# Traffic SLO Configuration
+traffic_target        = 90.0
+traffic_warning       = 95.0
+traffic_threshold_rpm = 100
+
+# Error Rate SLO Configuration
+error_rate_target  = 99.5
+error_rate_warning = 99.8
