@@ -8,6 +8,11 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
 jobs:
   terraform-lint:
     name: Terraform Lint and Validate
@@ -20,7 +25,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: "1.0.11"
+          terraform_version: "1.7.5"
 
       - name: Terraform Format Check
         id: fmt

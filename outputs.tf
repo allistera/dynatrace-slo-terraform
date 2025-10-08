@@ -1,21 +1,21 @@
 output "latency_slo_id" {
   description = "ID of the latency SLO"
-  value       = dynatrace_slo.todoservice_latency.id
+  value       = module.slo_service.latency.id
 }
 
 output "availability_slo_id" {
   description = "ID of the availability SLO"
-  value       = dynatrace_slo.todoservice_availability.id
+  value       = module.slo_service.availability.id
 }
 
 output "traffic_slo_id" {
   description = "ID of the traffic SLO"
-  value       = dynatrace_slo.todoservice_traffic.id
+  value       = module.slo_service.traffic.id
 }
 
 output "error_rate_slo_id" {
   description = "ID of the error rate SLO"
-  value       = dynatrace_slo.todoservice_errors.id
+  value       = module.slo_service.errors.id
 }
 
 output "slo_summary" {
@@ -24,23 +24,23 @@ output "slo_summary" {
     service_name = var.service_name
     slos = {
       latency = {
-        id     = dynatrace_slo.todoservice_latency.id
-        name   = dynatrace_slo.todoservice_latency.name
+        id     = module.slo_service.latency.id
+        name   = module.slo_service.latency.name
         target = var.latency_target
       }
       availability = {
-        id     = dynatrace_slo.todoservice_availability.id
-        name   = dynatrace_slo.todoservice_availability.name
+        id     = module.slo_service.availability.id
+        name   = module.slo_service.availability.name
         target = var.availability_target
       }
       traffic = {
-        id     = dynatrace_slo.todoservice_traffic.id
-        name   = dynatrace_slo.todoservice_traffic.name
+        id     = module.slo_service.traffic.id
+        name   = module.slo_service.traffic.name
         target = var.traffic_target
       }
       errors = {
-        id     = dynatrace_slo.todoservice_errors.id
-        name   = dynatrace_slo.todoservice_errors.name
+        id     = module.slo_service.errors.id
+        name   = module.slo_service.errors.name
         target = var.error_rate_target
       }
     }
