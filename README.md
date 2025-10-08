@@ -1,21 +1,22 @@
 # Dynatrace SLO Terraform - TodoService LATE Metrics
 
-This Terraform project manages Dynatrace SLOs based on the LATE metrics (Latency, Availability, Traffic, Errors) for the TodoService.
+This Terraform project manages Dynatrace SLOs based on the LATE metrics (Latency, Availability, Traffic, Errors) for the TodoService and links them to a Site Reliability Guardian policy.
 
 ## Overview
 
-The project creates four SLOs in Dynatrace:
+The project creates four SLOs in Dynatrace and (optionally) a Site Reliability Guardian that validates them before deployments:
 
 1. **Latency SLO** - Monitors response time performance
 2. **Availability SLO** - Tracks service uptime and success rate
 3. **Traffic SLO** - Measures request throughput
 4. **Error Rate SLO** - Monitors the percentage of failed requests
+5. **Site Reliability Guardian** - Aggregates the four SLOs into a deployment readiness check
 
 ## Prerequisites
 
 - Terraform >= 1.0
 - Dynatrace account with API access
-- Dynatrace API token with SLO write permissions
+- Dynatrace API token with SLO, Settings read/write permissions
 
 ### Creating a Dynatrace API Token
 
@@ -26,6 +27,8 @@ The project creates four SLOs in Dynatrace:
    - `slo.read`
    - `slo.write`
    - `metrics.read`
+   - `settings.read`
+   - `settings.write`
 5. Copy the generated token
 
 ## Setup
@@ -41,6 +44,7 @@ The project creates four SLOs in Dynatrace:
    - `dynatrace_environment_url`: Your Dynatrace environment URL
    - `dynatrace_api_token`: Your API token
    - Adjust SLO targets and thresholds as needed
+   - Optionally configure Site Reliability Guardian metadata
 
 4. Initialize Terraform:
    ```bash
@@ -81,6 +85,13 @@ All configurable variables are defined in `variables.tf`. Key variables include:
 #### Error Rate SLO
 - **error_rate_target**: Target % of successful requests (default: 99.5)
 
+#### Site Reliability Guardian
+- **enable_guardian**: Toggle guardian creation (default: `true`)
+- **guardian_name**: Override guardian name (default: `"<service_name> Guardian"`)
+- **guardian_description**: Optional description (default provides context)
+- **guardian_event_kind**: Storage type for evaluation events (`BIZ_EVENT` or `SDLC_EVENT`)
+- **guardian_tags**: Additional guardian tags (default: empty)
+
 ### Customization
 
 To modify SLO parameters:
@@ -99,7 +110,8 @@ service_name = "MyOtherService"
 After applying, Terraform outputs:
 
 - Individual SLO IDs for each metric
-- Summary object with all SLO details
+- Site Reliability Guardian ID (if enabled)
+- Summary object with all SLO and guardian details
 
 View outputs:
 ```bash
@@ -120,10 +132,12 @@ terraform output
 
 ```
 dynatrace-slo-terraform/
-├── main.tf                    # SLO resource definitions
+├── main.tf                    # SLO resources and Site Reliability Guardian
 ├── variables.tf               # Variable declarations
 ├── outputs.tf                 # Output definitions
 ├── terraform.tfvars.example   # Example configuration
+├── modules/
+│   └── slo_service/           # Module managing individual SLO resources and outputs
 └── README.md                  # Documentation
 ```
 
