@@ -22,19 +22,19 @@ locals {
 module "slo_service" {
   source = "./modules/slo_service"
 
-  service_name           = var.service_name
-  timeframe              = var.timeframe
-  latency_target         = var.latency_target
-  latency_warning        = var.latency_warning
-  latency_threshold_ms   = var.latency_threshold_ms
-  latency_percentile     = var.latency_percentile
-  availability_target    = var.availability_target
-  availability_warning   = var.availability_warning
-  traffic_target         = var.traffic_target
-  traffic_warning        = var.traffic_warning
-  traffic_threshold_rpm  = var.traffic_threshold_rpm
-  error_rate_target      = var.error_rate_target
-  error_rate_warning     = var.error_rate_warning
+  service_name          = var.service_name
+  timeframe             = var.timeframe
+  latency_target        = var.latency_target
+  latency_warning       = var.latency_warning
+  latency_threshold_ms  = var.latency_threshold_ms
+  latency_percentile    = var.latency_percentile
+  availability_target   = var.availability_target
+  availability_warning  = var.availability_warning
+  traffic_target        = var.traffic_target
+  traffic_warning       = var.traffic_warning
+  traffic_threshold_rpm = var.traffic_threshold_rpm
+  error_rate_target     = var.error_rate_target
+  error_rate_warning    = var.error_rate_warning
 }
 
 resource "dynatrace_site_reliability_guardian" "service" {
