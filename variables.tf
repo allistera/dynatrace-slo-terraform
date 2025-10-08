@@ -101,5 +101,5 @@ variable "service_url" {
 variable "synthetic_locations" {
   description = "List of Dynatrace synthetic location IDs"
   type        = list(string)
-  default     = ["GEOLOCATION-9999999999999999"]
+  default     = ["GEOLOCATION-871416B95457AB88"]
 }
