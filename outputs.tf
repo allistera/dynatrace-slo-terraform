@@ -44,5 +44,15 @@ output "slo_summary" {
         target = var.error_rate_target
       }
     }
+    guardian = {
+      enabled = var.enable_guardian
+      id      = try(dynatrace_site_reliability_guardian.service[0].id, null)
+      name    = var.enable_guardian ? local.guardian_name : null
+    }
   }
+}
+
+output "guardian_id" {
+  description = "ID of the Site Reliability Guardian"
+  value       = try(dynatrace_site_reliability_guardian.service[0].id, null)
 }

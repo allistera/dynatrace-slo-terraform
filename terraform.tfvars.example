@@ -24,3 +24,10 @@ traffic_threshold_rpm = 100
 # Error Rate SLO Configuration
 error_rate_target  = 99.5
 error_rate_warning = 99.8
+
+# Site Reliability Guardian Configuration
+enable_guardian      = true
+guardian_name        = "TodoService Guardian"
+guardian_description = "Ensures SLO objectives remain within thresholds"
+guardian_event_kind  = "BIZ_EVENT"
+guardian_tags        = ["team:platform", "stage:staging"]

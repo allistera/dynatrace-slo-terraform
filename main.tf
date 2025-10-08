@@ -14,6 +14,11 @@ provider "dynatrace" {
   dt_api_token = var.dynatrace_api_token
 }
 
+locals {
+  guardian_name        = coalesce(var.guardian_name, "${var.service_name} Guardian")
+  guardian_description = coalesce(var.guardian_description, "Site Reliability Guardian for ${var.service_name}")
+}
+
 module "slo_service" {
   source = "./modules/slo_service"
 
@@ -30,6 +35,53 @@ module "slo_service" {
   traffic_threshold_rpm  = var.traffic_threshold_rpm
   error_rate_target      = var.error_rate_target
   error_rate_warning     = var.error_rate_warning
+}
+
+resource "dynatrace_site_reliability_guardian" "service" {
+  count = var.enable_guardian ? 1 : 0
+
+  name        = local.guardian_name
+  description = local.guardian_description
+  event_kind  = var.guardian_event_kind
+  tags        = toset(var.guardian_tags)
+
+  objectives {
+    objective {
+      name                = "Latency SLO"
+      objective_type      = "REFERENCE_SLO"
+      reference_slo       = module.slo_service.latency_metric_key
+      comparison_operator = "GREATER_THAN_OR_EQUAL"
+      target              = var.latency_target
+      warning             = var.latency_warning
+    }
+
+    objective {
+      name                = "Availability SLO"
+      objective_type      = "REFERENCE_SLO"
+      reference_slo       = module.slo_service.availability_metric_key
+      comparison_operator = "GREATER_THAN_OR_EQUAL"
+      target              = var.availability_target
+      warning             = var.availability_warning
+    }
+
+    objective {
+      name                = "Traffic SLO"
+      objective_type      = "REFERENCE_SLO"
+      reference_slo       = module.slo_service.traffic_metric_key
+      comparison_operator = "GREATER_THAN_OR_EQUAL"
+      target              = var.traffic_target
+      warning             = var.traffic_warning
+    }
+
+    objective {
+      name                = "Error Rate SLO"
+      objective_type      = "REFERENCE_SLO"
+      reference_slo       = module.slo_service.error_rate_metric_key
+      comparison_operator = "GREATER_THAN_OR_EQUAL"
+      target              = var.error_rate_target
+      warning             = var.error_rate_warning
+    }
+  }
 }
 
 resource "dynatrace_http_monitor" "todoservice_uptime" {

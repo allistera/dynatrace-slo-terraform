@@ -103,3 +103,34 @@ variable "synthetic_locations" {
   type        = list(string)
   default     = ["GEOLOCATION-871416B95457AB88"]
 }
+
+# Site Reliability Guardian configuration
+variable "enable_guardian" {
+  description = "Whether to create a Site Reliability Guardian for the service"
+  type        = bool
+  default     = true
+}
+
+variable "guardian_name" {
+  description = "Optional override for the Site Reliability Guardian name"
+  type        = string
+  default     = null
+}
+
+variable "guardian_description" {
+  description = "Optional description for the Site Reliability Guardian"
+  type        = string
+  default     = null
+}
+
+variable "guardian_event_kind" {
+  description = "Event kind to use when recording guardian evaluations"
+  type        = string
+  default     = "BIZ_EVENT"
+}
+
+variable "guardian_tags" {
+  description = "Additional tags to attach to the Site Reliability Guardian"
+  type        = list(string)
+  default     = []
+}
