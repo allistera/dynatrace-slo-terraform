@@ -1,53 +1,50 @@
+locals {
+  slo_targets = {
+    latency      = var.latency_target
+    availability = var.availability_target
+    traffic      = var.traffic_target
+    errors       = var.error_rate_target
+  }
+
+  slo_summary_values = {
+    for key, slo in module.slo_service.slos :
+    key => {
+      id     = slo.id
+      name   = slo.name
+      target = lookup(local.slo_targets, key, null)
+    }
+  }
+}
+
 output "latency_slo_id" {
   description = "ID of the latency SLO"
-  value       = module.slo_service.latency.id
+  value       = try(module.slo_service.slos["latency"].id, null)
 }
 
 output "availability_slo_id" {
   description = "ID of the availability SLO"
-  value       = module.slo_service.availability.id
+  value       = try(module.slo_service.slos["availability"].id, null)
 }
 
 output "traffic_slo_id" {
   description = "ID of the traffic SLO"
-  value       = module.slo_service.traffic.id
+  value       = try(module.slo_service.slos["traffic"].id, null)
 }
 
 output "error_rate_slo_id" {
   description = "ID of the error rate SLO"
-  value       = module.slo_service.errors.id
+  value       = try(module.slo_service.slos["errors"].id, null)
 }
 
 output "slo_summary" {
   description = "Summary of all created SLOs"
   value = {
     service_name = var.service_name
-    slos = {
-      latency = {
-        id     = module.slo_service.latency.id
-        name   = module.slo_service.latency.name
-        target = var.latency_target
-      }
-      availability = {
-        id     = module.slo_service.availability.id
-        name   = module.slo_service.availability.name
-        target = var.availability_target
-      }
-      traffic = {
-        id     = module.slo_service.traffic.id
-        name   = module.slo_service.traffic.name
-        target = var.traffic_target
-      }
-      errors = {
-        id     = module.slo_service.errors.id
-        name   = module.slo_service.errors.name
-        target = var.error_rate_target
-      }
-    }
+    slos         = local.slo_summary_values
     guardian = {
-      enabled = var.enable_guardian
+      enabled = length(dynatrace_site_reliability_guardian.service) > 0
       id      = try(dynatrace_site_reliability_guardian.service[0].id, null)
-      name    = var.enable_guardian ? local.guardian_name : null
+      name    = length(dynatrace_site_reliability_guardian.service) > 0 ? local.guardian_name : null
     }
   }
 }
