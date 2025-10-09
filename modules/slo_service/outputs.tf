@@ -1,51 +1,50 @@
+locals {
+  slo_outputs = {
+    for key, resource in dynatrace_slo.this :
+    key => {
+      id         = resource.id
+      name       = resource.name
+      metric_key = "func:slo.${resource.metric_name}"
+    }
+  }
+}
+
 output "latency" {
   description = "Latency SLO resource"
-  value = {
-    id   = dynatrace_slo.latency.id
-    name = dynatrace_slo.latency.name
-  }
+  value       = lookup(local.slo_outputs, "latency", null)
 }
 
 output "availability" {
   description = "Availability SLO resource"
-  value = {
-    id   = dynatrace_slo.availability.id
-    name = dynatrace_slo.availability.name
-  }
+  value       = lookup(local.slo_outputs, "availability", null)
 }
 
 output "traffic" {
   description = "Traffic SLO resource"
-  value = {
-    id   = dynatrace_slo.traffic.id
-    name = dynatrace_slo.traffic.name
-  }
+  value       = lookup(local.slo_outputs, "traffic", null)
 }
 
 output "errors" {
   description = "Error rate SLO resource"
-  value = {
-    id   = dynatrace_slo.errors.id
-    name = dynatrace_slo.errors.name
-  }
+  value       = lookup(local.slo_outputs, "errors", null)
 }
 
 output "latency_metric_key" {
   description = "Metric key for the latency SLO"
-  value       = "func:slo.${dynatrace_slo.latency.metric_name}"
+  value       = try(local.slo_outputs["latency"].metric_key, null)
 }
 
 output "availability_metric_key" {
   description = "Metric key for the availability SLO"
-  value       = "func:slo.${dynatrace_slo.availability.metric_name}"
+  value       = try(local.slo_outputs["availability"].metric_key, null)
 }
 
 output "traffic_metric_key" {
   description = "Metric key for the traffic SLO"
-  value       = "func:slo.${dynatrace_slo.traffic.metric_name}"
+  value       = try(local.slo_outputs["traffic"].metric_key, null)
 }
 
 output "error_rate_metric_key" {
   description = "Metric key for the error rate SLO"
-  value       = "func:slo.${dynatrace_slo.errors.metric_name}"
+  value       = try(local.slo_outputs["errors"].metric_key, null)
 }
