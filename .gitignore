@@ -16,3 +16,6 @@ terraform.rc
 # OS files
 .DS_Store
 Thumbs.db
+
+# Node.js web app
+web/node_modules/

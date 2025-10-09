@@ -140,10 +140,29 @@ dynatrace-slo-terraform/
 ├── variables.tf               # Variable declarations
 ├── outputs.tf                 # Output definitions
 ├── terraform.tfvars.example   # Example configuration
+├── web/                       # Node.js web app to generate terraform.tfvars on a branch
 ├── modules/
 │   └── slo_service/           # Module managing individual SLO resources and outputs
 └── README.md                  # Documentation
 ```
+
+## Web Application
+
+Use the lightweight Node.js app in `web/` to collect Terraform variables through a form and push a `terraform.tfvars` file to GitHub on a new branch.
+
+1. Install dependencies:
+   ```bash
+   cd web
+   npm install
+   ```
+2. Start the server (defaults to `http://localhost:3000`):
+   ```bash
+   npm start
+   ```
+3. Fill in the GitHub repository details, provide a personal access token with `repo` scope, and review the generated Terraform variable values.
+4. Submit the form to have the app create a branch and commit the rendered `terraform.tfvars` file using the GitHub API.
+
+The app only sends your token directly to GitHub for the API calls and does not persist it.
 
 ## Maintenance
 

@@ -1,0 +1,20 @@
+{
+  "name": "tfvars-web-app",
+  "version": "1.0.0",
+  "description": "Basic web app that collects Terraform variables and creates a GitHub branch with a tfvars file.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "lint": "eslint .",
+    "build": "node --check server.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.8",
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3",
+    "eslint": "^8.57.0"
+  }
+}
