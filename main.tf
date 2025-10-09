@@ -38,36 +38,41 @@ module "slo_service" {
 }
 
 locals {
-  guardian_objectives = {
+  slo_metric_keys = module.slo_service.metric_keys
+  guardian_sources = {
     latency = {
-      name          = "Latency SLO"
-      reference_slo = module.slo_service.latency_metric_key
-      target        = var.latency_target
-      warning       = var.latency_warning
+      name    = "Latency SLO"
+      target  = var.latency_target
+      warning = var.latency_warning
     }
     availability = {
-      name          = "Availability SLO"
-      reference_slo = module.slo_service.availability_metric_key
-      target        = var.availability_target
-      warning       = var.availability_warning
+      name    = "Availability SLO"
+      target  = var.availability_target
+      warning = var.availability_warning
     }
     traffic = {
-      name          = "Traffic SLO"
-      reference_slo = module.slo_service.traffic_metric_key
-      target        = var.traffic_target
-      warning       = var.traffic_warning
+      name    = "Traffic SLO"
+      target  = var.traffic_target
+      warning = var.traffic_warning
     }
     errors = {
-      name          = "Error Rate SLO"
-      reference_slo = module.slo_service.error_rate_metric_key
-      target        = var.error_rate_target
-      warning       = var.error_rate_warning
+      name    = "Error Rate SLO"
+      target  = var.error_rate_target
+      warning = var.error_rate_warning
     }
+  }
+
+  guardian_objectives = {
+    for key, cfg in local.guardian_sources :
+    key => merge(cfg, {
+      reference_slo = lookup(local.slo_metric_keys, key, null)
+    })
+    if lookup(local.slo_metric_keys, key, null) != null
   }
 }
 
 resource "dynatrace_site_reliability_guardian" "service" {
-  count = var.enable_guardian ? 1 : 0
+  count = var.enable_guardian && length(local.guardian_objectives) > 0 ? 1 : 0
 
   name        = local.guardian_name
   description = local.guardian_description

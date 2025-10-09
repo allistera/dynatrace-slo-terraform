@@ -1,51 +1,65 @@
+locals {
+  slo_resources = {
+    for key, slo in dynatrace_slo.this :
+    key => {
+      id          = slo.id
+      name        = slo.name
+      metric_name = slo.metric_name
+    }
+  }
+
+  slo_metric_keys = {
+    for key, details in local.slo_resources :
+    key => "func:slo.${details.metric_name}"
+  }
+}
+
 output "latency" {
   description = "Latency SLO resource"
-  value = {
-    id   = dynatrace_slo.this["latency"].id
-    name = dynatrace_slo.this["latency"].name
-  }
+  value       = lookup(local.slo_resources, "latency", null)
 }
 
 output "availability" {
   description = "Availability SLO resource"
-  value = {
-    id   = dynatrace_slo.this["availability"].id
-    name = dynatrace_slo.this["availability"].name
-  }
+  value       = lookup(local.slo_resources, "availability", null)
 }
 
 output "traffic" {
   description = "Traffic SLO resource"
-  value = {
-    id   = dynatrace_slo.this["traffic"].id
-    name = dynatrace_slo.this["traffic"].name
-  }
+  value       = lookup(local.slo_resources, "traffic", null)
 }
 
 output "errors" {
   description = "Error rate SLO resource"
-  value = {
-    id   = dynatrace_slo.this["errors"].id
-    name = dynatrace_slo.this["errors"].name
-  }
+  value       = lookup(local.slo_resources, "errors", null)
 }
 
 output "latency_metric_key" {
   description = "Metric key for the latency SLO"
-  value       = "func:slo.${dynatrace_slo.this["latency"].metric_name}"
+  value       = lookup(local.slo_metric_keys, "latency", null)
 }
 
 output "availability_metric_key" {
   description = "Metric key for the availability SLO"
-  value       = "func:slo.${dynatrace_slo.this["availability"].metric_name}"
+  value       = lookup(local.slo_metric_keys, "availability", null)
 }
 
 output "traffic_metric_key" {
   description = "Metric key for the traffic SLO"
-  value       = "func:slo.${dynatrace_slo.this["traffic"].metric_name}"
+  value       = lookup(local.slo_metric_keys, "traffic", null)
 }
 
 output "error_rate_metric_key" {
   description = "Metric key for the error rate SLO"
-  value       = "func:slo.${dynatrace_slo.this["errors"].metric_name}"
+  value       = lookup(local.slo_metric_keys, "errors", null)
+}
+
+output "slos" {
+  description = "Map of all SLO resources keyed by SLO type"
+  value       = local.slo_resources
+}
+
+output "metric_keys" {
+  description = "Map of all SLO metric keys keyed by SLO type"
+  value       = local.slo_metric_keys
 }
