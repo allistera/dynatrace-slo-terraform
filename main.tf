@@ -37,6 +37,35 @@ module "slo_service" {
   error_rate_warning    = var.error_rate_warning
 }
 
+locals {
+  guardian_objectives = {
+    latency = {
+      name          = "Latency SLO"
+      reference_slo = module.slo_service.latency_metric_key
+      target        = var.latency_target
+      warning       = var.latency_warning
+    }
+    availability = {
+      name          = "Availability SLO"
+      reference_slo = module.slo_service.availability_metric_key
+      target        = var.availability_target
+      warning       = var.availability_warning
+    }
+    traffic = {
+      name          = "Traffic SLO"
+      reference_slo = module.slo_service.traffic_metric_key
+      target        = var.traffic_target
+      warning       = var.traffic_warning
+    }
+    errors = {
+      name          = "Error Rate SLO"
+      reference_slo = module.slo_service.error_rate_metric_key
+      target        = var.error_rate_target
+      warning       = var.error_rate_warning
+    }
+  }
+}
+
 resource "dynatrace_site_reliability_guardian" "service" {
   count = var.enable_guardian ? 1 : 0
 
@@ -46,40 +75,17 @@ resource "dynatrace_site_reliability_guardian" "service" {
   tags        = toset(var.guardian_tags)
 
   objectives {
-    objective {
-      name                = "Latency SLO"
-      objective_type      = "REFERENCE_SLO"
-      reference_slo       = module.slo_service.latency_metric_key
-      comparison_operator = "GREATER_THAN_OR_EQUAL"
-      target              = var.latency_target
-      warning             = var.latency_warning
-    }
+    dynamic "objective" {
+      for_each = local.guardian_objectives
 
-    objective {
-      name                = "Availability SLO"
-      objective_type      = "REFERENCE_SLO"
-      reference_slo       = module.slo_service.availability_metric_key
-      comparison_operator = "GREATER_THAN_OR_EQUAL"
-      target              = var.availability_target
-      warning             = var.availability_warning
-    }
-
-    objective {
-      name                = "Traffic SLO"
-      objective_type      = "REFERENCE_SLO"
-      reference_slo       = module.slo_service.traffic_metric_key
-      comparison_operator = "GREATER_THAN_OR_EQUAL"
-      target              = var.traffic_target
-      warning             = var.traffic_warning
-    }
-
-    objective {
-      name                = "Error Rate SLO"
-      objective_type      = "REFERENCE_SLO"
-      reference_slo       = module.slo_service.error_rate_metric_key
-      comparison_operator = "GREATER_THAN_OR_EQUAL"
-      target              = var.error_rate_target
-      warning             = var.error_rate_warning
+      content {
+        name                = objective.value.name
+        objective_type      = "REFERENCE_SLO"
+        reference_slo       = objective.value.reference_slo
+        comparison_operator = "GREATER_THAN_OR_EQUAL"
+        target              = objective.value.target
+        warning             = objective.value.warning
+      }
     }
   }
 }
