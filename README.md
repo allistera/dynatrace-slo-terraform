@@ -1,10 +1,10 @@
-# Dynatrace SLO Terraform - TodoService LATE Metrics
+# Dynatrace SLO Terraform
 
-This Terraform project manages Dynatrace SLOs based on the LATE metrics (Latency, Availability, Traffic, Errors) for the TodoService and links them to a Site Reliability Guardian policy.
+This Terraform project manages Dynatrace Service Level Objectives (SLOs) based on the LATE metrics (Latency, Availability, Traffic, Errors) for any monitored service and optionally links them to a Site Reliability Guardian policy.
 
 ## Overview
 
-The project creates four SLOs in Dynatrace and (optionally) a Site Reliability Guardian that validates them before deployments:
+The configuration creates four SLOs in Dynatrace and (optionally) a Site Reliability Guardian that validates them before deployments:
 
 1. **Latency SLO** - Monitors response time performance
 2. **Availability SLO** - Tracks service uptime and success rate
@@ -67,23 +67,27 @@ The project creates four SLOs in Dynatrace and (optionally) a Site Reliability G
 
 All configurable variables are defined in `variables.tf`. Key variables include:
 
-- **service_name**: Name of the service (default: "TodoService")
+- **service_name**: Name of the service the SLOs apply to (default: "TodoService")
 - **timeframe**: Evaluation period (default: "-1w" for 1 week)
 
 #### Latency SLO
 - **latency_target**: Target % (default: 95.0)
+- **latency_warning**: Warning threshold (default: 97.0)
 - **latency_threshold_ms**: Max acceptable latency in ms (default: 500)
 - **latency_percentile**: Which percentile to measure (default: 95)
 
 #### Availability SLO
 - **availability_target**: Target % (default: 99.9)
+- **availability_warning**: Warning threshold (default: 99.95)
 
 #### Traffic SLO
 - **traffic_target**: Target % (default: 90.0)
+- **traffic_warning**: Warning threshold (default: 95.0)
 - **traffic_threshold_rpm**: Expected requests per minute (default: 100)
 
 #### Error Rate SLO
 - **error_rate_target**: Target % of successful requests (default: 99.5)
+- **error_rate_warning**: Warning threshold (default: 99.8)
 
 #### Site Reliability Guardian
 - **enable_guardian**: Toggle guardian creation (default: `true`)
@@ -94,13 +98,13 @@ All configurable variables are defined in `variables.tf`. Key variables include:
 
 ### Customization
 
-To modify SLO parameters:
+Each SLO is generated from a single reusable module, so you can adjust thresholds and naming conventions in one place. Common changes include:
 
-1. Edit values in `terraform.tfvars`
-2. Run `terraform plan` to preview changes
-3. Run `terraform apply` to apply changes
+1. Overriding the defaults in `terraform.tfvars`.
+2. Running `terraform plan` to preview the update.
+3. Applying the change with `terraform apply`.
 
-To change the service name:
+To target a different service:
 ```hcl
 service_name = "MyOtherService"
 ```
@@ -111,7 +115,7 @@ After applying, Terraform outputs:
 
 - Individual SLO IDs for each metric
 - Site Reliability Guardian ID (if enabled)
-- Summary object with all SLO and guardian details
+- Summary object with all SLO and guardian details (including targets and guardian metadata)
 
 View outputs:
 ```bash
